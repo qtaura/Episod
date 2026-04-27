@@ -8,6 +8,12 @@ export const createReview = async (data: CreateReviewData) => {
     data: {
       ...data,
       wordCount,
+      metrics: {
+        create: {},
+      },
+    },
+    include: {
+      metrics: true,
     },
   });
 };
@@ -22,6 +28,7 @@ export const getReviews = async () => {
       show: true,
       likes: true,
       comments: true,
+      metrics: true,
     },
   });
 };

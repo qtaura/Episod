@@ -8,6 +8,9 @@ export const getUserProfile = async (userId: string) => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          metrics: true,
+        },
       },
     },
   });
