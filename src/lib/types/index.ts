@@ -2,11 +2,15 @@ import { Review, User, ReviewMetrics, Show } from '@prisma/client';
 
 export type CreateReviewData = {
   userId: string;
-  showId: string;
   rating: number;
   content: string;
   isRewatch?: boolean;
   watchedAt?: string | Date;
+  show: {
+    tmdbId: number;
+    title: string;
+    posterPath?: string | null;
+  };
 };
 
 export type LikeData = {

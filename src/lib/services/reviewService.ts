@@ -2,18 +2,36 @@ import { prisma } from '../db';
 import { CreateReviewData } from '../types';
 
 export const createReview = async (data: CreateReviewData) => {
-  const wordCount = data.content.split(/\s+/).filter(Boolean).length;
+  const { userId, rating, content, isRewatch, watchedAt, show } = data;
+  const wordCount = content.split(/\s+/).filter(Boolean).length;
 
   return prisma.review.create({
     data: {
-      ...data,
+      rating,
+      content,
       wordCount,
+      isRewatch,
+      watchedAt: watchedAt ? new Date(watchedAt) : null,
+      user: {
+        connect: { id: userId },
+      },
+      show: {
+        connectOrCreate: {
+          where: { tmdbId: show.tmdbId },
+          create: {
+            tmdbId: show.tmdbId,
+            title: show.title,
+            posterPath: show.posterPath,
+          },
+        },
+      },
       metrics: {
         create: {},
       },
     },
     include: {
       metrics: true,
+      show: true,
     },
   });
 };
