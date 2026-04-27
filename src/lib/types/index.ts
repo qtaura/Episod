@@ -1,4 +1,4 @@
-import { Review, User, ReviewMetrics } from '@prisma/client';
+import { Review, User, ReviewMetrics, Show } from '@prisma/client';
 
 export type CreateReviewData = {
   userId: string;
@@ -17,3 +17,10 @@ export type LikeData = {
 export type ReviewWithMetrics = Review & { metrics: ReviewMetrics | null };
 
 export type UserProfile = User & { reviews: ReviewWithMetrics[] };
+
+export type FeedReview = Review & {
+  user: User;
+  show: Show;
+  metrics: ReviewMetrics | null;
+  score: number;
+};
