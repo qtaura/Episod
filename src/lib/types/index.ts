@@ -1,10 +1,10 @@
 import { Review, User, ReviewMetrics, Show } from '@prisma/client';
 
 export type CreateReviewData = {
-  userId: string;
   rating: number;
   content: string;
   isRewatch?: boolean;
+  spoiler?: boolean;
   watchedAt?: string | Date;
   show: {
     tmdbId: number;

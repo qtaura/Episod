@@ -22,6 +22,7 @@ export default function CreateReviewPage() {
   const [rating, setRating] = useState<number | ''>(5);
   const [content, setContent] = useState('');
   const [isRewatch, setIsRewatch] = useState(false);
+  const [spoiler, setSpoiler] = useState(false);
   const [watchedAt, setWatchedAt] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,10 +92,10 @@ export default function CreateReviewPage() {
 
     try {
       const body = {
-        userId: 'clxko5gxr00001234567890ab', // Temporary hardcoded user ID
-        rating: Number(rating),
+                rating: Number(rating),
         content,
         isRewatch,
+        spoiler,
         watchedAt: watchedAt ? new Date(watchedAt).toISOString() : undefined,
         show: {
           tmdbId: selectedShow.id,
@@ -152,7 +153,7 @@ export default function CreateReviewPage() {
             <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto">
               {searchResults.map((show) => (
                 <li key={show.id} onClick={() => handleSelectShow(show)} className="p-3 hover:bg-gray-100 cursor-pointer flex items-center">
-                  <img src={`https://image.tmdb.org/t/p/w92${show.poster_path}`} alt="" className="w-10 h-14 object-cover rounded-sm mr-4" />
+                  <img src={`https://image.tmdb.org/t/p/w92${show.poster_path}`} alt="" className="w-10 h-14 object-cover rounded-sm mr-4" loading="lazy" />
                   <div>
                     <p className="font-semibold">{show.title || show.name}</p>
                     <p className="text-sm text-gray-500">{show.release_date?.substring(0,4) || show.first_air_date?.substring(0,4)}</p>
@@ -182,6 +183,11 @@ export default function CreateReviewPage() {
         <div className="flex items-center">
           <input id="isRewatch" type="checkbox" checked={isRewatch} onChange={(e) => setIsRewatch(e.target.checked)} className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
           <label htmlFor="isRewatch" className="ml-2 block text-sm text-gray-900">This is a rewatch</label>
+        </div>
+
+        <div className="flex items-center">
+          <input id="spoiler" type="checkbox" checked={spoiler} onChange={(e) => setSpoiler(e.target.checked)} className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+          <label htmlFor="spoiler" className="ml-2 block text-sm text-gray-900">Contains spoilers</label>
         </div>
 
         {error && (

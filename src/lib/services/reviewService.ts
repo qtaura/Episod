@@ -1,8 +1,8 @@
 import { prisma } from '../db';
 import { CreateReviewData } from '../types';
 
-export const createReview = async (data: CreateReviewData) => {
-  const { userId, rating, content, isRewatch, watchedAt, show } = data;
+export const createReview = async (userId: string, data: CreateReviewData) => {
+  const { rating, content, isRewatch, spoiler, watchedAt, show } = data;
   const wordCount = content.split(/\s+/).filter(Boolean).length;
 
   return prisma.review.create({
@@ -11,9 +11,10 @@ export const createReview = async (data: CreateReviewData) => {
       content,
       wordCount,
       isRewatch,
+      spoiler,
       watchedAt: watchedAt ? new Date(watchedAt) : null,
       user: {
-        connect: { id: userId },
+        connect: { id: userId }
       },
       show: {
         connectOrCreate: {
@@ -21,32 +22,33 @@ export const createReview = async (data: CreateReviewData) => {
           create: {
             tmdbId: show.tmdbId,
             title: show.title,
-            posterPath: show.posterPath,
-          },
-        },
+            posterPath: show.posterPath
+          }
+        }
       },
       metrics: {
-        create: {},
-      },
+        create: {}
+      }
     },
     include: {
       metrics: true,
       show: true,
-    },
+      user: true
+    }
   });
 };
 
 export const getReviews = async () => {
   return prisma.review.findMany({
     orderBy: {
-      createdAt: 'desc',
+      createdAt: 'desc'
     },
     include: {
       user: true,
       show: true,
       likes: true,
       comments: true,
-      metrics: true,
-    },
+      metrics: true
+    }
   });
 };
