@@ -1,6 +1,13 @@
 import { prisma } from '../db';
 import { CreateReviewData } from '../types';
 
+const publicUserSelect = {
+  id: true,
+  username: true,
+  email: true,
+  createdAt: true
+} as const;
+
 export const createReview = async (userId: string, data: CreateReviewData) => {
   const { rating, content, isRewatch, spoiler, watchedAt, show } = data;
   const wordCount = content.split(/\s+/).filter(Boolean).length;
@@ -33,7 +40,9 @@ export const createReview = async (userId: string, data: CreateReviewData) => {
     include: {
       metrics: true,
       show: true,
-      user: true
+      user: {
+        select: publicUserSelect
+      }
     }
   });
 };
@@ -44,7 +53,9 @@ export const getReviews = async () => {
       createdAt: 'desc'
     },
     include: {
-      user: true,
+      user: {
+        select: publicUserSelect
+      },
       show: true,
       likes: true,
       comments: true,
