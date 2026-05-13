@@ -1,14 +1,17 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const passwordHash = await bcrypt.hash('demo12345', 10);
   const user = await prisma.user.upsert({
     where: { email: 'demo@episod.app' },
-    update: {},
+    update: { passwordHash },
     create: {
       username: 'demo',
-      email: 'demo@episod.app'
+      email: 'demo@episod.app',
+      passwordHash
     }
   });
 
@@ -22,16 +25,19 @@ async function main() {
     }
   });
 
-  await prisma.review.create({
-    data: {
-      userId: user.id,
-      showId: show.id,
-      rating: 8.5,
-      content: 'Strong characters and high production value. Great baseline for Episod seed data.',
-      wordCount: 13,
-      metrics: { create: { likes: 0, comments: 0, views: 0, score: 0 } }
-    }
-  });
+  const existing = await prisma.review.findFirst({ where: { userId: user.id, showId: show.id } });
+  if (!existing) {
+    await prisma.review.create({
+      data: {
+        userId: user.id,
+        showId: show.id,
+        rating: 8.5,
+        content: 'Strong characters and high production value. Great baseline for Episod seed data.',
+        wordCount: 13,
+        metrics: { create: { likes: 0, comments: 0, views: 0, score: 0 } }
+      }
+    });
+  }
 }
 
 main().finally(() => prisma.$disconnect());
