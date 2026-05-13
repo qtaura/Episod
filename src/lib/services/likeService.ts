@@ -1,11 +1,14 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '../db';
 import { LikeData } from '../types';
 
 export const likeReview = async (data: LikeData) => {
-  // Use an upsert to handle cases where the like might already exist,
-  // though the unique constraint in the schema also prevents duplicates.
-  // This approach can be extended to handle un-liking.
-  return prisma.like.create({
-    data,
-  });
+  try {
+    return await prisma.like.create({ data });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return null;
+    }
+    throw error;
+  }
 };

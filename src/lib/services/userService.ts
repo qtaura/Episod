@@ -1,17 +1,26 @@
 import { prisma } from '../db';
 
+const publicUserSelect = {
+  id: true,
+  username: true,
+  email: true,
+  createdAt: true
+} as const;
+
 export const getUserProfile = async (userId: string) => {
   return prisma.user.findUnique({
     where: { id: userId },
-    include: {
+    select: {
+      ...publicUserSelect,
       reviews: {
         orderBy: {
-          createdAt: 'desc',
+          createdAt: 'desc'
         },
         include: {
-          metrics: true,
-        },
-      },
-    },
+          show: true,
+          metrics: true
+        }
+      }
+    }
   });
 };

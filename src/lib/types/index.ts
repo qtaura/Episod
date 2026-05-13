@@ -1,10 +1,12 @@
 import { Review, User, ReviewMetrics, Show } from '@prisma/client';
 
+export type PublicUser = Pick<User, 'id' | 'username' | 'email' | 'createdAt'>;
+
 export type CreateReviewData = {
-  userId: string;
   rating: number;
   content: string;
   isRewatch?: boolean;
+  spoiler?: boolean;
   watchedAt?: string | Date;
   show: {
     tmdbId: number;
@@ -20,10 +22,10 @@ export type LikeData = {
 
 export type ReviewWithMetrics = Review & { metrics: ReviewMetrics | null };
 
-export type UserProfile = User & { reviews: ReviewWithMetrics[] };
+export type UserProfile = PublicUser & { reviews: (Review & { metrics: ReviewMetrics | null; show: Show })[] };
 
 export type FeedReview = Review & {
-  user: User;
+  user: PublicUser;
   show: Show;
   metrics: ReviewMetrics | null;
   score: number;
